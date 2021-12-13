@@ -1,6 +1,9 @@
 {
   "version": 2,
   "projects": {
+    "core": "apps/core",
+    "core-mock": "apps/core-mock",
+    "entities": "libs/entities",
     "ui": "apps/ui",
     "ui-e2e": "apps/ui-e2e"
   }

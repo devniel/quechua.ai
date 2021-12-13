@@ -1,0 +1,122 @@
+import { useRef, useEffect } from 'react';
+import styled from '@emotion/styled';
+import { Box } from '@mui/material';
+import Annotation from '../components/Annotation';
+import * as d3 from 'd3';
+import * as d3Annotation from 'd3-svg-annotation';
+
+const StyledPage = styled.div`
+  .page {
+  }
+`;
+
+export function Record() {
+  const svgRef = useRef(null);
+  const { width, height, margin } = {
+    width: 1024,
+    height: 1024,
+    margin: { top: 30, right: 30, bottom: 30, left: 60 },
+  };
+  const svgWidth = width + margin.left + margin.right;
+  const svgHeight = height + margin.top + margin.bottom;
+  const data = [
+    {
+      items: [
+        {
+          value: 10,
+        },
+      ],
+    },
+  ];
+
+  useEffect(() => {
+    const svgEl = d3.select(svgRef.current);
+    const text = 'Text with the background';
+    const spaceWidth = 20;
+    const textWidth = text
+      .split(' ')
+      .reduce(
+        (arr, _) => [
+          ...arr,
+          (arr.length > 0 ? arr[arr.length - 1] : 0) +
+            _.length * 20 +
+            spaceWidth,
+        ],
+        []
+      );
+    text.split(' ').forEach((t, idx) => {
+      svgEl
+        .append('text')
+        .attr('id', `${t}-${idx}`)
+        .text(t)
+        .attr('y', 190)
+        .attr('x', 150 + (idx > 0 ? textWidth[idx - 1] : 0))
+        .attr('font-size', 36)
+        .attr('font-family', 'monospace')
+        .attr('fill', 'black');
+    });
+
+    const type = d3Annotation.annotationLabel;
+
+    const annotations = [
+      {
+        note: {
+          label: 'Longer text to show text wrapping',
+          bgPadding: 20,
+          title: 'Annotations :)',
+        },
+        //can use x, y directly instead of data
+        data: { date: '18-Sep-09', close: 185.02 },
+        className: 'show-bg',
+        dy: 137,
+        dx: 162,
+        x: 50,
+        y: 100,
+      },
+    ];
+
+    const parseTime = d3.timeParse('%d-%b-%y');
+    const timeFormat = d3.timeFormat('%d-%b-%y');
+
+    //Skipping setting domains for sake of example
+    const x = d3.scaleTime().range([0, 800]);
+    const y = d3.scaleLinear().range([300, 0]);
+
+    const makeAnnotations: any = d3Annotation
+      .annotation()
+      .editMode(true)
+      //also can set and override in the note.padding property
+      //of the annotation object
+      .notePadding(15)
+      .type(type)
+      //accessors & accessorsInverse not needed
+      //if using x, y in annotations JSON
+      .accessors({
+        x: (d: any) => x(parseTime(d.date)),
+        y: (d: any) => y(d.close),
+      })
+      .accessorsInverse({
+        date: (d) => timeFormat(x.invert(d.x)),
+        close: (d) => y.invert(d.y),
+      })
+      .annotations(annotations);
+
+    svgEl.append('g').attr('class', 'annotation-group').call(makeAnnotations);
+  }, []); // Redraw chart if data changes
+
+  /*return (
+    <Box
+      sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+    >
+      <Annotation color="red" content="saludo">
+        Allillan
+      </Annotation>
+      <Annotation color="yellow" content="prefijo de pregunta">
+        chu
+      </Annotation>
+    </Box>
+  );*/
+  return <svg ref={svgRef} width={svgWidth} height={svgHeight} />;
+}
+
+export default Record;
