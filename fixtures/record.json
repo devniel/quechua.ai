@@ -7,7 +7,8 @@
       "color": "red",
       "text": "allillan",
       "tag": "text.secondary",
-      "note": "text.note"
+      "note": "text.note",
+      "formats": []
     },
     {
       "start": 8,
@@ -15,7 +16,8 @@
       "color": "blue",
       "text": "chu",
       "tag": "text.secondary",
-      "note": "text.note"
+      "note": "text.note",
+      "formats": ["bold", "underlined"]
     }
   ]
 }

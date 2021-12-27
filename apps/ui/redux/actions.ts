@@ -1,5 +1,6 @@
 import * as types from './types';
 import * as api from '../services/api';
+import { async } from 'rxjs';
 
 // INITIALIZES CLOCK ON SERVER
 export const serverRenderClock = () => (dispatch) =>
@@ -28,11 +29,27 @@ export const setRecord = (record) => ({
   payload: record,
 });
 
+export const setAnnotation = (record, annotation) => ({
+  type: types.SET_ANNOTATION,
+  payload: annotation,
+});
+
 export const getRecord = (recordId) => async (dispatch) => {
   try {
     const record = await api.getRecord(recordId);
     dispatch(setRecord(record));
   } catch (error) {
+    console.error(error);
+  }
+};
+
+export const addAnnotation = (record, annotation) => async (dispatch) => {
+  try {
+    //const record = await api.getRecord(recordId);
+    console.log('addAnnnotation()', { record, annotation });
+    dispatch(setAnnotation(record, annotation));
+  } catch (error) {
+    console.log('error??');
     console.error(error);
   }
 };

@@ -1,10 +1,16 @@
+import { Record } from '@quechua.ai/entities';
 import { combineReducers } from 'redux';
 import * as types from './types';
 
-const recordsReducer = (state = null, { type, payload }) => {
+const recordsReducer = (state: Record | null = null, { type, payload }) => {
+  console.log({ type, payload });
   switch (type) {
     case types.SET_RECORD:
       return payload;
+    case types.SET_ANNOTATION:
+      const record = state;
+      record?.annotations.push(payload);
+      return record;
     default:
       return state;
   }

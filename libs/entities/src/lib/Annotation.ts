@@ -5,4 +5,5 @@ export class Annotation {
   text: string;
   tag: string;
   note: string;
+  formats: string[];
 }

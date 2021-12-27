@@ -6,6 +6,18 @@ import {
   Card,
   CardActions,
   CardContent,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControl,
+  Input,
+  InputLabel,
+  ListItem,
+  TextareaAutosize,
+  TextField,
   Typography,
   useMediaQuery,
   useTheme,
@@ -15,7 +27,12 @@ import * as d3 from 'd3';
 import * as d3Annotation from 'd3-svg-annotation';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-import { getRecord } from '../redux/actions';
+import { addAnnotation, getRecord } from '../redux/actions';
+import TagFacesIcon from '@mui/icons-material/TagFaces';
+import TagsInput from '../components/TagsInput';
+import { GithubPicker } from 'react-color';
+import AnnotationModal from '../components/AnnotationModal';
+import RecordText from '../components/RecordText';
 
 const StyledPage = styled.div`
   .page {
@@ -43,9 +60,12 @@ const annotations = [
 
 export function Record() {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const [selection, setSelection] = useState<{
+    text: string;
+    start: number;
+    end: number;
+  } | null>(null);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const record = useSelector((state: any) => state.record);
   const dispatch = useDispatch();
 
@@ -53,17 +73,34 @@ export function Record() {
     dispatch(getRecord(router.query.rid));
   }, []);
 
-  const handleTextSelection = () => {
-    console.log(window.getSelection());
-    console.log(window.getSelection().toString());
+  const handleTextSelection = ({ text, start, end }) => {
+    setSelection({ text, start, end });
   };
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleOnCancelAnnotation = () => {
+    setSelection(null);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleOnAcceptAnnotation = ({
+    selection,
+    color,
+    note,
+    tags,
+    formats,
+  }) => {
+    console.log('handleOnAcceptAnnotation()');
+    dispatch(
+      addAnnotation(record, {
+        text: selection.text,
+        start: selection.start,
+        end: selection.end,
+        color,
+        note,
+        tags,
+        formats,
+      })
+    );
+    setSelection(null);
   };
 
   if (!record) return <></>;
@@ -89,26 +126,11 @@ export function Record() {
           position: 'relative',
         }}
       >
-        <Typography
-          variant="h3"
-          component="div"
-          color="transparent"
-          position="absolute"
-          onMouseUp={handleTextSelection}
-        >
-          {record.text}
-        </Typography>
-        {record.annotations.map((annotation) => (
-          <Typography
-            variant="h3"
-            component="div"
-            color={annotation.color}
-            onMouseUp={handleTextSelection}
-            unselectable="on"
-          >
-            {annotation.text}
-          </Typography>
-        ))}
+        <RecordText
+          text={record.text}
+          annotations={record.annotations}
+          onTextSelection={handleTextSelection}
+        />
       </Box>
 
       {record.annotations.map((annotation) => (
@@ -143,6 +165,14 @@ export function Record() {
           </CardContent>
         </Card>
       ))}
+
+      {selection && (
+        <AnnotationModal
+          selection={selection}
+          onCancel={handleOnCancelAnnotation}
+          onAccept={handleOnAcceptAnnotation}
+        />
+      )}
     </Box>
   );
 }
