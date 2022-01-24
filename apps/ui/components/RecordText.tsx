@@ -45,8 +45,11 @@ export default function RecordText({
           ? parseInt(range.endContainer?.parentElement?.dataset.index!)
           : parseInt((range.endContainer as HTMLElement).dataset.index!);
       const endOffset = range.endOffset;
+      const text = range.cloneContents().textContent;
+      // To avoid triggering event when no text was selected and just a click were done
+      if (!text) return;
       onTextSelection({
-        text: range.cloneContents().textContent,
+        text,
         start: start + startOffset,
         end: end + (endOffset === 0 ? -1 : 0),
       });

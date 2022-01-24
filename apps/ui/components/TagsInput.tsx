@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import Downshift from 'downshift';
-import { Chip, TextField, Theme } from '@mui/material';
+import { Chip, TextField, TextFieldProps, Theme } from '@mui/material';
 
-export default function TagsInput({ ...props }) {
+export default function TagsInput({
+  ...props
+}: TextFieldProps & {
+  onChange?: (item) => void;
+  placeholder?: string;
+  value: string[];
+}) {
   const { onChange, placeholder, value, ...other } = props;
+  console.log('value =>', value);
   const [inputValue, setInputValue] = useState('');
   const [selectedItem, setSelectedItem] = useState<string[]>([]);
 
@@ -13,34 +20,34 @@ export default function TagsInput({ ...props }) {
 
   useEffect(() => {
     if (JSON.stringify(selectedItem) != JSON.stringify(value)) {
-      onChange(selectedItem);
+      onChange?.(selectedItem);
     }
   }, [selectedItem, onChange]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+    if (event.key === ',') event.preventDefault();
+    if (event.key === 'Enter' || event.key === ',') {
       const eventTarget = event.target as HTMLInputElement;
       const newSelectedItem = [...selectedItem];
-      const duplicatedValues = newSelectedItem.indexOf(
-        eventTarget.value.trim()
-      );
+      const newValue = eventTarget.value.trim().replace(',', '');
+      const duplicatedValues = newSelectedItem.indexOf(newValue);
 
       if (duplicatedValues !== -1) {
         setInputValue('');
         return;
       }
-      if (!eventTarget.value.replace(/\s/g, '').length) return;
+      if (!newValue.replace(/\s/g, '').length) return;
 
-      newSelectedItem.push(eventTarget.value.trim());
+      newSelectedItem.push(newValue);
       setSelectedItem(newSelectedItem);
       setInputValue('');
     }
     if (
-      selectedItem.length &&
+      selectedItem?.length &&
       !inputValue.length &&
       event.key === 'Backspace'
     ) {
-      setSelectedItem(selectedItem.slice(0, selectedItem.length - 1));
+      setSelectedItem(selectedItem?.slice(0, selectedItem.length - 1));
     }
   };
 
@@ -83,8 +90,8 @@ export default function TagsInput({ ...props }) {
                 inputProps={inputProps}
                 InputProps={{
                   startAdornment:
-                    selectedItem.length > 0
-                      ? selectedItem.map((item) => (
+                    selectedItem?.length > 0
+                      ? selectedItem?.map((item) => (
                           <Chip
                             sx={{
                               margin: (theme: Theme) =>

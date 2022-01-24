@@ -6,7 +6,7 @@
       "end": 7,
       "color": "red",
       "text": "allillan",
-      "tag": "text.secondary",
+      "tags": ["text.secondary"],
       "note": "text.note",
       "formats": []
     },
@@ -15,7 +15,7 @@
       "end": 10,
       "color": "blue",
       "text": "chu",
-      "tag": "text.secondary",
+      "tags": ["text.secondary"],
       "note": "text.note",
       "formats": ["bold", "underlined"]
     }

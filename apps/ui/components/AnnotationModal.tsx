@@ -11,6 +11,7 @@ import {
   TextField,
   ToggleButton,
   ToggleButtonGroup,
+  Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
@@ -92,6 +93,12 @@ export default function AnnotationModal({
     setFormats(newFormats);
   };
 
+  const getFormatsAsStyle = () => ({
+    textDecoration: formats.includes('underlined') ? 'underline' : 'unset',
+    fontWeight: formats.includes('bold') ? 'bold' : 'unset',
+    fontStyle: formats.includes('italic') ? 'italic' : 'unset',
+  });
+
   return (
     <Dialog
       fullScreen={fullScreen}
@@ -106,9 +113,17 @@ export default function AnnotationModal({
         sx={{
           pt: 4,
           fontSize: '1.5rem',
+          textAlign: 'center',
         }}
       >
-        {selection?.text}
+        <Typography
+          variant="h3"
+          component="div"
+          color={color}
+          sx={getFormatsAsStyle()}
+        >
+          {selection?.text}
+        </Typography>
       </DialogTitle>
 
       <DialogContent>

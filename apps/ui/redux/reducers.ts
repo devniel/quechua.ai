@@ -4,15 +4,23 @@ import * as types from './types';
 
 const recordsReducer = (state: Record | null = null, { type, payload }) => {
   console.log({ type, payload });
+  const record = JSON.parse(JSON.stringify(state));
   switch (type) {
     case types.SET_RECORD:
       return payload;
     case types.SET_ANNOTATION:
-      const record = state;
       record?.annotations.push(payload);
       return record;
+    case types.DELETE_ANNOTATION:
+      const annotation = payload;
+      console.log(' DELETE_ANNOTATION', annotation);
+      const idx = record?.annotations.findIndex(
+        (a) => a.start === annotation.start && a.end === annotation.end
+      );
+      if (idx !== -1) record?.annotations.splice(idx, 1);
+      return record;
     default:
-      return state;
+      return record;
   }
 };
 

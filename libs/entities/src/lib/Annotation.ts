@@ -3,7 +3,7 @@ export class Annotation {
   end: number;
   color: string;
   text: string;
-  tag: string;
+  tags: string[];
   note: string;
   formats: string[];
 }

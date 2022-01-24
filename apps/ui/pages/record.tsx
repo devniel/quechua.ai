@@ -12,6 +12,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Fab,
   FormControl,
   Input,
   InputLabel,
@@ -27,12 +28,17 @@ import * as d3 from 'd3';
 import * as d3Annotation from 'd3-svg-annotation';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-import { addAnnotation, getRecord } from '../redux/actions';
+import { addAnnotation, deleteAnnotation, getRecord } from '../redux/actions';
 import TagFacesIcon from '@mui/icons-material/TagFaces';
 import TagsInput from '../components/TagsInput';
 import { GithubPicker } from 'react-color';
 import AnnotationModal from '../components/AnnotationModal';
 import RecordText from '../components/RecordText';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import NavigationIcon from '@mui/icons-material/Navigation';
+import AnnotationCard from '../components/AnnotationCard';
 
 const StyledPage = styled.div`
   .page {
@@ -45,7 +51,7 @@ const annotations = [
     end: 7,
     color: 'red',
     text: 'allillan',
-    tag: 'text.secondary',
+    tags: 'text.secondary',
     note: 'text.note',
   },
   {
@@ -53,7 +59,7 @@ const annotations = [
     end: 10,
     color: 'blue',
     text: 'chu',
-    tag: 'text.secondary',
+    tags: 'text.secondary',
     note: 'text.note',
   },
 ];
@@ -103,6 +109,10 @@ export function Record() {
     setSelection(null);
   };
 
+  const handleAnnotationDelete = (annotation) => {
+    dispatch(deleteAnnotation(record, annotation));
+  };
+
   if (!record) return <></>;
 
   return (
@@ -133,39 +143,12 @@ export function Record() {
         />
       </Box>
 
+      {/* Annotation cards */}
       {record.annotations.map((annotation) => (
-        <Card sx={{ minWidth: 275 }}>
-          <CardContent>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-                gap: '5px',
-              }}
-            >
-              <Typography variant="h5" component="div" flex="1">
-                {annotation.text}
-              </Typography>
-              <Box
-                sx={{
-                  width: '15px',
-                  height: '15px',
-                  borderRadius: '15px',
-                  backgroundColor: annotation.color,
-                  display: 'inline-block',
-                }}
-              ></Box>
-            </Box>
-            <Typography sx={{ mb: 1.5 }} color="text.secondary">
-              {annotation.tag}
-            </Typography>
-            <Typography variant="body2">{annotation.note}</Typography>
-          </CardContent>
-        </Card>
+        <AnnotationCard {...annotation} onDelete={handleAnnotationDelete} />
       ))}
 
+      {/*Selection modal */}
       {selection && (
         <AnnotationModal
           selection={selection}
@@ -173,6 +156,23 @@ export function Record() {
           onAccept={handleOnAcceptAnnotation}
         />
       )}
+
+      {/* Action buttons */}
+      <Box sx={{ '& > :not(style)': { m: 1 } }}>
+        <Fab
+          variant="extended"
+          size="medium"
+          color="secondary"
+          aria-label="edit"
+        >
+          <EditIcon sx={{ mr: 1 }} />
+          Edit
+        </Fab>
+        <Fab variant="extended" size="medium" color="primary" aria-label="add">
+          <AddIcon sx={{ mr: 1 }} />
+          New
+        </Fab>
+      </Box>
     </Box>
   );
 }

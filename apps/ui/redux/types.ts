@@ -6,3 +6,4 @@ export const RESET = 'RESET';
 
 export const SET_RECORD = 'SET_RECORD';
 export const SET_ANNOTATION = 'SET_ANNOTATION';
+export const DELETE_ANNOTATION = 'DELETE_ANNOTATION';
