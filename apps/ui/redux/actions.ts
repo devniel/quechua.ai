@@ -1,6 +1,7 @@
 import * as types from './types';
 import * as api from '../services/api';
 import { async } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
 
 // INITIALIZES CLOCK ON SERVER
 export const serverRenderClock = () => (dispatch) =>
@@ -39,6 +40,11 @@ export const _deleteAnnotation = (record, annotation) => ({
   payload: annotation,
 });
 
+export const _editAnnotation = (record, annotation) => ({
+  type: types.EDIT_ANNOTATION,
+  payload: annotation,
+});
+
 export const getRecord = (recordId) => async (dispatch) => {
   try {
     const record = await api.getRecord(recordId);
@@ -52,6 +58,7 @@ export const addAnnotation = (record, annotation) => async (dispatch) => {
   try {
     //const record = await api.getRecord(recordId);
     console.log('addAnnnotation()', { record, annotation });
+    annotation.id = uuidv4();
     dispatch(setAnnotation(record, annotation));
   } catch (error) {
     console.error(error);
@@ -63,6 +70,15 @@ export const deleteAnnotation = (record, annotation) => async (dispatch) => {
     //const record = await api.getRecord(recordId);
     console.log('deleteAnnotation()', { record, annotation });
     dispatch(_deleteAnnotation(record, annotation));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const editAnnotation = (record, annotation) => async (dispatch) => {
+  try {
+    console.log('editAnnotation()', { record, annotation });
+    dispatch(_editAnnotation(record, annotation));
   } catch (error) {
     console.error(error);
   }

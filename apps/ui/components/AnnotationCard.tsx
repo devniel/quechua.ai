@@ -3,10 +3,12 @@ import { css, jsx } from '@emotion/react';
 import { Box, Card, CardContent, IconButton, Typography } from '@mui/material';
 import { Annotation } from '@quechua.ai/entities';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import TagsInput from './TagsInput';
 import Chip from '@mui/material/Chip';
 
 export default function AnnotationCard({
+  id,
   text,
   color,
   tags,
@@ -14,10 +16,12 @@ export default function AnnotationCard({
   note,
   start,
   end,
-  onDelete,
+  onDelete = () => {},
+  onEdit = () => {},
 }: PropsWithChildren<
   Annotation & {
     onDelete: ({ start, end }) => void;
+    onEdit: (annotation: Annotation) => void;
   }
 >) {
   const getFormatsAsStyle = () => ({
@@ -47,6 +51,14 @@ export default function AnnotationCard({
             {text}
           </Typography>
           <IconButton
+            aria-label="edit"
+            onClick={() =>
+              onEdit({ id, text, color, tags, formats, note, start, end })
+            }
+          >
+            <EditIcon />
+          </IconButton>
+          <IconButton
             aria-label="delete"
             onClick={() => onDelete({ start, end })}
           >
@@ -58,9 +70,19 @@ export default function AnnotationCard({
             label={tag}
             size="small"
             sx={{
-              padding: '0px 5px !important',
+              padding: '0px !important',
               marginTop: '-15px',
               borderRadius: '5px',
+              background: 'none',
+              fontStyle: 'italic',
+              color: '#9e9e9e',
+              '& span': {
+                padding: '0px',
+                overflow: 'inherit',
+              },
+              '& + &': {
+                marginLeft: '5px',
+              },
             }}
           />
         ))}

@@ -1,7 +1,9 @@
 {
+  "id": "2a060c2c-80ea-400b-83d1-4fb2c4a1bc37",
   "text": "allillanchu",
   "annotations": [
     {
+      "id": "8c585e22-18af-481f-82d5-78f8c9e04e1a",
       "start": 0,
       "end": 7,
       "color": "red",
@@ -11,6 +13,7 @@
       "formats": []
     },
     {
+      "id": "a5fbc6b1-8451-4b4c-962a-fb5a8168de6d",
       "start": 8,
       "end": 10,
       "color": "blue",

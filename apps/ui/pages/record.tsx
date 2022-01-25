@@ -28,7 +28,12 @@ import * as d3 from 'd3';
 import * as d3Annotation from 'd3-svg-annotation';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-import { addAnnotation, deleteAnnotation, getRecord } from '../redux/actions';
+import {
+  addAnnotation,
+  deleteAnnotation,
+  editAnnotation,
+  getRecord,
+} from '../redux/actions';
 import TagFacesIcon from '@mui/icons-material/TagFaces';
 import TagsInput from '../components/TagsInput';
 import { GithubPicker } from 'react-color';
@@ -94,23 +99,42 @@ export function Record() {
     tags,
     formats,
   }) => {
-    console.log('handleOnAcceptAnnotation()');
-    dispatch(
-      addAnnotation(record, {
-        text: selection.text,
-        start: selection.start,
-        end: selection.end,
-        color,
-        note,
-        tags,
-        formats,
-      })
-    );
+    if (!selection.id) {
+      dispatch(
+        addAnnotation(record, {
+          text: selection.text,
+          start: selection.start,
+          end: selection.end,
+          color,
+          note,
+          tags,
+          formats,
+        })
+      );
+    } else {
+      dispatch(
+        editAnnotation(record, {
+          id: selection.id,
+          text: selection.text,
+          start: selection.start,
+          end: selection.end,
+          color,
+          note,
+          tags,
+          formats,
+        })
+      );
+    }
     setSelection(null);
   };
 
   const handleAnnotationDelete = (annotation) => {
     dispatch(deleteAnnotation(record, annotation));
+  };
+
+  const handleAnnotationEdit = (annotation) => {
+    setSelection(annotation);
+    //dispatch(editAnnotation(record, annotation));
   };
 
   if (!record) return <></>;
@@ -145,7 +169,11 @@ export function Record() {
 
       {/* Annotation cards */}
       {record.annotations.map((annotation) => (
-        <AnnotationCard {...annotation} onDelete={handleAnnotationDelete} />
+        <AnnotationCard
+          {...annotation}
+          onDelete={handleAnnotationDelete}
+          onEdit={handleAnnotationEdit}
+        />
       ))}
 
       {/*Selection modal */}

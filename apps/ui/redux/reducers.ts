@@ -6,12 +6,14 @@ const recordsReducer = (state: Record | null = null, { type, payload }) => {
   console.log({ type, payload });
   const record = JSON.parse(JSON.stringify(state));
   switch (type) {
-    case types.SET_RECORD:
+    case types.SET_RECORD: {
       return payload;
-    case types.SET_ANNOTATION:
+    }
+    case types.SET_ANNOTATION: {
       record?.annotations.push(payload);
       return record;
-    case types.DELETE_ANNOTATION:
+    }
+    case types.DELETE_ANNOTATION: {
       const annotation = payload;
       console.log(' DELETE_ANNOTATION', annotation);
       const idx = record?.annotations.findIndex(
@@ -19,6 +21,14 @@ const recordsReducer = (state: Record | null = null, { type, payload }) => {
       );
       if (idx !== -1) record?.annotations.splice(idx, 1);
       return record;
+    }
+    case types.EDIT_ANNOTATION: {
+      const annotation = payload;
+      console.log('EDIT_ANNOTATION', annotation);
+      const idx = record?.annotations.findIndex((a) => a.id === annotation.id);
+      if (idx !== -1) record.annotations[idx] = annotation;
+      return record;
+    }
     default:
       return record;
   }

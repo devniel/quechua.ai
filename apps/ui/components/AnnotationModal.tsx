@@ -22,12 +22,18 @@ import FormatItalicIcon from '@mui/icons-material/FormatItalic';
 import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
 import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { Annotation } from '@quechua.ai/entities';
 
 interface Props {
   selection: {
-    text: string;
+    id?: string;
     start: number;
     end: number;
+    color?: string;
+    text?: string;
+    tags?: string[];
+    note?: string;
+    formats?: string[];
   };
   onCancel: () => void;
   onAccept: (annotation) => void;
@@ -40,18 +46,11 @@ export default function AnnotationModal({
 }: PropsWithChildren<Props>) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-  const [note, setNote] = useState<string>();
+  const [note, setNote] = useState<string>(selection.note || '');
   const [openColorPicker, setOpenColorPicker] = useState(false);
-  const [chipData, setChipData] = useState([
-    { key: 0, label: 'Angular' },
-    { key: 1, label: 'jQuery' },
-    { key: 2, label: 'Polymer' },
-    { key: 3, label: 'React' },
-    { key: 4, label: 'Vue.js' },
-  ]);
-  const [tags, setTags] = useState([]);
-  const [color, setColor] = useState();
-  const [formats, setFormats] = useState<string[]>([]);
+  const [tags, setTags] = useState(selection.tags || []);
+  const [color, setColor] = useState(selection.color);
+  const [formats, setFormats] = useState<string[]>(selection.formats || []);
 
   /** Note */
   const handleChangeNote = (e) => {

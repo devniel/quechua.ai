@@ -1,4 +1,5 @@
 export class Annotation {
+  id: string;
   start: number;
   end: number;
   color: string;

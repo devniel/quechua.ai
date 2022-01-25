@@ -10,9 +10,8 @@ export default function TagsInput({
   value: string[];
 }) {
   const { onChange, placeholder, value, ...other } = props;
-  console.log('value =>', value);
   const [inputValue, setInputValue] = useState('');
-  const [selectedItem, setSelectedItem] = useState<string[]>([]);
+  const [selectedItem, setSelectedItem] = useState<string[]>(value || []);
 
   useEffect(() => {
     setSelectedItem(value);
