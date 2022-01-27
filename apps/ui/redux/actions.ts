@@ -45,6 +45,11 @@ export const _editAnnotation = (record, annotation) => ({
   payload: annotation,
 });
 
+export const _editRecord = (record) => ({
+  type: types.EDIT_RECORD,
+  payload: record,
+});
+
 export const getRecord = (recordId) => async (dispatch) => {
   try {
     const record = await api.getRecord(recordId);
@@ -79,6 +84,15 @@ export const editAnnotation = (record, annotation) => async (dispatch) => {
   try {
     console.log('editAnnotation()', { record, annotation });
     dispatch(_editAnnotation(record, annotation));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const editRecord = (record) => async (dispatch) => {
+  try {
+    console.log('editRecord()', { record });
+    dispatch(_editRecord(record));
   } catch (error) {
     console.error(error);
   }

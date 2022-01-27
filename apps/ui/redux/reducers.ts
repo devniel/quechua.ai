@@ -29,6 +29,12 @@ const recordsReducer = (state: Record | null = null, { type, payload }) => {
       if (idx !== -1) record.annotations[idx] = annotation;
       return record;
     }
+    case types.EDIT_RECORD: {
+      const updatedRecord = payload;
+      updatedRecord.annotations =
+        updatedRecord.text === record.text ? record?.annotations : [];
+      return updatedRecord;
+    }
     default:
       return record;
   }

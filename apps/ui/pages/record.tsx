@@ -7,6 +7,7 @@ import {
   CardActions,
   CardContent,
   Chip,
+  Container,
   Dialog,
   DialogActions,
   DialogContent,
@@ -32,6 +33,7 @@ import {
   addAnnotation,
   deleteAnnotation,
   editAnnotation,
+  editRecord,
   getRecord,
 } from '../redux/actions';
 import TagFacesIcon from '@mui/icons-material/TagFaces';
@@ -44,6 +46,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import NavigationIcon from '@mui/icons-material/Navigation';
 import AnnotationCard from '../components/AnnotationCard';
+import RecordModal from '../components/RecordModal';
 
 const StyledPage = styled.div`
   .page {
@@ -76,6 +79,7 @@ export function Record() {
     start: number;
     end: number;
   } | null>(null);
+  const [editing, setEditing] = useState(false);
   const theme = useTheme();
   const record = useSelector((state: any) => state.record);
   const dispatch = useDispatch();
@@ -137,71 +141,145 @@ export function Record() {
     //dispatch(editAnnotation(record, annotation));
   };
 
+  const handleOnCancelRecordEdition = () => {
+    setEditing(false);
+  };
+
+  const handleOnAcceptRecordEdition = (record) => {
+    setEditing(false);
+    dispatch(editRecord(record));
+  };
+
   if (!record) return <></>;
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        gap: '10px',
-      }}
-    >
+    <Container maxWidth="sm">
       <Box
         sx={{
           display: 'flex',
-          flexDirection: 'row',
+          flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          gap: '0px',
-          padding: '50px 10px 30px 10px',
-          position: 'relative',
+          gap: '10px',
         }}
       >
-        <RecordText
-          text={record.text}
-          annotations={record.annotations}
-          onTextSelection={handleTextSelection}
-        />
-      </Box>
-
-      {/* Annotation cards */}
-      {record.annotations.map((annotation) => (
-        <AnnotationCard
-          {...annotation}
-          onDelete={handleAnnotationDelete}
-          onEdit={handleAnnotationEdit}
-        />
-      ))}
-
-      {/*Selection modal */}
-      {selection && (
-        <AnnotationModal
-          selection={selection}
-          onCancel={handleOnCancelAnnotation}
-          onAccept={handleOnAcceptAnnotation}
-        />
-      )}
-
-      {/* Action buttons */}
-      <Box sx={{ '& > :not(style)': { m: 1 } }}>
-        <Fab
-          variant="extended"
-          size="medium"
-          color="secondary"
-          aria-label="edit"
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '0px',
+            padding: '50px 10px 0px 10px',
+            position: 'relative',
+          }}
         >
-          <EditIcon sx={{ mr: 1 }} />
-          Edit
-        </Fab>
-        <Fab variant="extended" size="medium" color="primary" aria-label="add">
-          <AddIcon sx={{ mr: 1 }} />
-          New
-        </Fab>
+          <RecordText
+            text={record.text}
+            annotations={record.annotations}
+            onTextSelection={handleTextSelection}
+          />
+        </Box>
+
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '0px',
+            padding: '0px 20px',
+            position: 'relative',
+          }}
+        >
+          {record.tags?.map((tag) => (
+            <Chip
+              label={tag}
+              size="small"
+              sx={{
+                padding: '0px !important',
+                marginTop: '-15px',
+                borderRadius: '5px',
+                background: 'none',
+                fontStyle: 'italic',
+                color: '#9e9e9e',
+                '& span': {
+                  padding: '0px',
+                  overflow: 'inherit',
+                },
+                '& + &': {
+                  marginLeft: '5px',
+                },
+              }}
+            />
+          ))}
+        </Box>
+
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '0px',
+            padding: '0px 20px',
+            position: 'relative',
+          }}
+        >
+          {record.note}
+        </Box>
+
+        {/* Annotation cards */}
+        {record.annotations.map((annotation) => (
+          <AnnotationCard
+            {...annotation}
+            onDelete={handleAnnotationDelete}
+            onEdit={handleAnnotationEdit}
+          />
+        ))}
+
+        {/*Selection modal */}
+        {selection && (
+          <AnnotationModal
+            selection={selection}
+            onCancel={handleOnCancelAnnotation}
+            onAccept={handleOnAcceptAnnotation}
+          />
+        )}
+
+        {/*Record edition modal */}
+        {editing && (
+          <RecordModal
+            record={record}
+            onCancel={handleOnCancelRecordEdition}
+            onAccept={handleOnAcceptRecordEdition}
+          />
+        )}
+
+        {/* Action buttons */}
+        <Box sx={{ '& > :not(style)': { m: 1 } }}>
+          <Fab
+            variant="extended"
+            size="medium"
+            color="secondary"
+            aria-label="edit"
+            onClick={() => setEditing(true)}
+          >
+            <EditIcon sx={{ mr: 1 }} />
+            Edit
+          </Fab>
+          <Fab
+            variant="extended"
+            size="medium"
+            color="primary"
+            aria-label="add"
+          >
+            <AddIcon sx={{ mr: 1 }} />
+            New
+          </Fab>
+        </Box>
       </Box>
-    </Box>
+    </Container>
   );
 }
 
