@@ -1,9 +1,14 @@
 import { Record } from '@quechua.ai/entities';
 import { combineReducers } from 'redux';
+import { HYDRATE, createWrapper } from 'next-redux-wrapper';
+import {
+  createRouterMiddleware,
+  initialRouterState,
+  routerReducer,
+} from 'connected-next-router';
 import * as types from './types';
 
 const recordsReducer = (state: Record | null = null, { type, payload }) => {
-  console.log({ type, payload });
   const record = JSON.parse(JSON.stringify(state));
   switch (type) {
     case types.SET_RECORD: {
@@ -15,7 +20,6 @@ const recordsReducer = (state: Record | null = null, { type, payload }) => {
     }
     case types.DELETE_ANNOTATION: {
       const annotation = payload;
-      console.log(' DELETE_ANNOTATION', annotation);
       const idx = record?.annotations.findIndex(
         (a) => a.start === annotation.start && a.end === annotation.end
       );
@@ -24,7 +28,6 @@ const recordsReducer = (state: Record | null = null, { type, payload }) => {
     }
     case types.EDIT_ANNOTATION: {
       const annotation = payload;
-      console.log('EDIT_ANNOTATION', annotation);
       const idx = record?.annotations.findIndex((a) => a.id === annotation.id);
       if (idx !== -1) record.annotations[idx] = annotation;
       return record;
@@ -35,49 +38,38 @@ const recordsReducer = (state: Record | null = null, { type, payload }) => {
         updatedRecord.text === record.text ? record?.annotations : [];
       return updatedRecord;
     }
+    case types.CREATE_RECORD: {
+      return payload;
+    }
     default:
       return record;
   }
 };
 
-// COUNTER REDUCER
-const counterReducer = (state = 0, { type }) => {
-  switch (type) {
-    case types.INCREMENT:
-      return state + 1;
-    case types.DECREMENT:
-      return state - 1;
-    case types.RESET:
-      return 0;
-    default:
-      return state;
-  }
-};
-
-// INITIAL TIMER STATE
-const initialTimerState = {
-  lastUpdate: 0,
-  light: false,
-};
-
-// TIMER REDUCER
-const timerReducer = (state = initialTimerState, { type, payload }) => {
-  switch (type) {
-    case types.TICK:
-      return {
-        lastUpdate: payload.ts,
-        light: !!payload.light,
-      };
-    default:
-      return state;
+/**
+ * Router reducer
+ */
+// Using next-redux-wrapper's initStore
+export const mainReducer = (state, action) => {
+  if (action.type === HYDRATE) {
+    const nextState = {
+      ...state, // use previous state
+      ...action.payload, // apply delta from hydration
+    };
+    if (typeof window !== 'undefined' && state?.router) {
+      // preserve router value on client side navigation
+      nextState.router = state.router;
+    }
+    return nextState;
+  } else {
+    return rootReducer(state, action);
   }
 };
 
 // COMBINED REDUCERS
-const reducers = {
-  counter: counterReducer,
-  timer: timerReducer,
+const rootReducer = combineReducers({
   record: recordsReducer,
-};
+  router: routerReducer,
+});
 
-export default combineReducers(reducers);
+export default rootReducer;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Downshift from 'downshift';
-import { Chip, TextField, TextFieldProps, Theme } from '@mui/material';
+import { Chip, TextField, TextFieldProps, Theme, Box } from '@mui/material';
 
 export default function TagsInput({
   ...props
@@ -77,47 +77,45 @@ export default function TagsInput({
         onChange={handleChange}
         selectedItem={selectedItem}
       >
-        {({ getInputProps }) => {
+        {({ getInputProps, getRootProps }) => {
           const { onBlur, onChange, onFocus, ...inputProps } = getInputProps({
             onKeyDown: handleKeyDown,
             placeholder,
           });
           return (
-            <div>
-              <TextField
-                variant="standard"
-                inputProps={inputProps}
-                InputProps={{
-                  startAdornment:
-                    selectedItem?.length > 0
-                      ? selectedItem?.map((item) => (
-                          <Chip
-                            sx={{
-                              margin: (theme: Theme) =>
-                                theme.spacing(0.5, 0.25),
-                            }}
-                            key={item}
-                            tabIndex={-1}
-                            label={item}
-                            onDelete={handleDelete(item)}
-                          />
-                        ))
-                      : null,
-                  onBlur,
-                  onChange: (event) => {
-                    handleInputChange(event);
-                    onChange?.(event as any);
-                  },
-                  onFocus,
-                }}
-                {...other}
-                autoFocus
-                margin="dense"
-                id="name"
-                type="text"
-                fullWidth
-              />
-            </div>
+            <TextField
+              variant="standard"
+              inputProps={inputProps}
+              InputProps={{
+                startAdornment:
+                  selectedItem?.length > 0
+                    ? selectedItem?.map((item) => (
+                        <Chip
+                          sx={{
+                            margin: (theme: Theme) => theme.spacing(0.5, 0.25),
+                          }}
+                          key={item}
+                          tabIndex={-1}
+                          label={item}
+                          onDelete={handleDelete(item)}
+                        />
+                      ))
+                    : null,
+                onBlur,
+                onChange: (event) => {
+                  handleInputChange(event);
+                  onChange?.(event as any);
+                },
+                onFocus,
+              }}
+              {...other}
+              autoFocus
+              margin="dense"
+              id="name"
+              type="text"
+              fullWidth
+              {...getRootProps()}
+            />
           );
         }}
       </Downshift>

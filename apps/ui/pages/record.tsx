@@ -230,7 +230,7 @@ export function Record() {
         </Box>
 
         {/* Annotation cards */}
-        {record.annotations.map((annotation) => (
+        {record.annotations?.map((annotation) => (
           <AnnotationCard
             {...annotation}
             onDelete={handleAnnotationDelete}

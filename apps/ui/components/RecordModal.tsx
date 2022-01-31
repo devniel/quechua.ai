@@ -48,7 +48,6 @@ export default function RecordModal({
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const [text, setText] = useState<string>(record.text || '');
   const [note, setNote] = useState<string>(record.note || '');
-  const [openColorPicker, setOpenColorPicker] = useState(false);
   const [tags, setTags] = useState(record.tags || []);
   const [color, setColor] = useState(record.color);
   const [formats, setFormats] = useState<string[]>(record.formats || []);
@@ -80,6 +79,7 @@ export default function RecordModal({
     });
   };
 
+  /** When changing record text */
   const handleChangeText = (e) => {
     setText(e.target.value);
   };

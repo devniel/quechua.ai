@@ -1,29 +1,7 @@
 import * as types from './types';
 import * as api from '../services/api';
-import { async } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
-
-// INITIALIZES CLOCK ON SERVER
-export const serverRenderClock = () => (dispatch) =>
-  dispatch({
-    type: types.TICK,
-    payload: { light: false, ts: Date.now() },
-  });
-
-// INITIALIZES CLOCK ON CLIENT
-export const startClock = () => (dispatch) =>
-  setInterval(() => {
-    dispatch({ type: types.TICK, payload: { light: true, ts: Date.now() } });
-  }, 1000);
-
-// INCREMENT COUNTER BY 1
-export const incrementCount = () => ({ type: types.INCREMENT });
-
-// DECREMENT COUNTER BY 1
-export const decrementCount = () => ({ type: types.DECREMENT });
-
-// RESET COUNTER
-export const resetCount = () => ({ type: types.RESET });
+import { push } from 'connected-next-router';
 
 export const setRecord = (record) => ({
   type: types.SET_RECORD,
@@ -47,6 +25,11 @@ export const _editAnnotation = (record, annotation) => ({
 
 export const _editRecord = (record) => ({
   type: types.EDIT_RECORD,
+  payload: record,
+});
+
+export const _createRecord = (record) => ({
+  type: types.CREATE_RECORD,
   payload: record,
 });
 
@@ -93,6 +76,21 @@ export const editRecord = (record) => async (dispatch) => {
   try {
     console.log('editRecord()', { record });
     dispatch(_editRecord(record));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const createRecord = (record) => async (dispatch) => {
+  try {
+    console.log('createRecord()', { record });
+    const createdRecord = await api.createRecord(record);
+    dispatch(_createRecord(createdRecord));
+    dispatch(
+      push({
+        pathname: `/record`,
+      })
+    );
   } catch (error) {
     console.error(error);
   }

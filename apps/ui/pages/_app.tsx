@@ -9,7 +9,8 @@ import theme from '../theme';
 import createEmotionCache from '../createEmotionCache';
 import { EmotionCache } from '@emotion/utils';
 import { Provider } from 'react-redux';
-import { useStore } from '../redux/store';
+import { useStore, wrapper } from '../redux/store';
+import { ConnectedRouter } from 'connected-next-router';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -24,21 +25,26 @@ function CustomApp(props: CustomAppProps) {
 
   return (
     <Provider store={store}>
-      <CacheProvider value={emotionCache}>
-        <Head>
-          <title>My page</title>
-          <meta name="viewport" content="initial-scale=1, width=device-width" />
-        </Head>
-        <ThemeProvider theme={theme}>
-          {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-          <CssBaseline />
-          <main className="app">
-            <Component {...pageProps} />
-          </main>
-        </ThemeProvider>
-      </CacheProvider>
+      <ConnectedRouter>
+        <CacheProvider value={emotionCache}>
+          <Head>
+            <title>My page</title>
+            <meta
+              name="viewport"
+              content="initial-scale=1, width=device-width"
+            />
+          </Head>
+          <ThemeProvider theme={theme}>
+            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+            <CssBaseline />
+            <main className="app">
+              <Component {...pageProps} />
+            </main>
+          </ThemeProvider>
+        </CacheProvider>
+      </ConnectedRouter>
     </Provider>
   );
 }
 
-export default CustomApp;
+export default wrapper.withRedux(CustomApp);
