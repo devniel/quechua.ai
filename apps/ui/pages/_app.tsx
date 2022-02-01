@@ -11,6 +11,8 @@ import { EmotionCache } from '@emotion/utils';
 import { Provider } from 'react-redux';
 import { useStore, wrapper } from '../redux/store';
 import { ConnectedRouter } from 'connected-next-router';
+import { Container } from '@mui/material';
+import { Box } from '@mui/material/node_modules/@mui/system';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -37,9 +39,13 @@ function CustomApp(props: CustomAppProps) {
           <ThemeProvider theme={theme}>
             {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
             <CssBaseline />
-            <main className="app">
+            <Box
+              display={'flex'}
+              justifyContent="center"
+              sx={{ width: '100%' }}
+            >
               <Component {...pageProps} />
-            </main>
+            </Box>
           </ThemeProvider>
         </CacheProvider>
       </ConnectedRouter>
