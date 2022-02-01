@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
+import Link from 'next/link';
 import {
   Box,
   Button,
@@ -24,7 +25,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import Annotation from '../components/Annotation';
+import Annotation from '../../components/Annotation';
 import * as d3 from 'd3';
 import * as d3Annotation from 'd3-svg-annotation';
 import { useDispatch, useSelector } from 'react-redux';
@@ -35,18 +36,18 @@ import {
   editAnnotation,
   editRecord,
   getRecord,
-} from '../redux/actions';
+} from '../../redux/actions';
 import TagFacesIcon from '@mui/icons-material/TagFaces';
-import TagsInput from '../components/TagsInput';
+import TagsInput from '../../components/TagsInput';
 import { GithubPicker } from 'react-color';
-import AnnotationModal from '../components/AnnotationModal';
-import RecordText from '../components/RecordText';
+import AnnotationModal from '../../components/AnnotationModal';
+import RecordText from '../../components/RecordText';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import NavigationIcon from '@mui/icons-material/Navigation';
-import AnnotationCard from '../components/AnnotationCard';
-import RecordModal from '../components/RecordModal';
+import AnnotationCard from '../../components/AnnotationCard';
+import RecordModal from '../../components/RecordModal';
 
 const StyledPage = styled.div`
   .page {
@@ -80,13 +81,14 @@ export function Record() {
     end: number;
   } | null>(null);
   const [editing, setEditing] = useState(false);
-  const theme = useTheme();
   const record = useSelector((state: any) => state.record);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getRecord(router.query.rid));
-  }, []);
+    if (!router.isReady) return;
+    dispatch(getRecord(router.query.record));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady]);
 
   const handleTextSelection = ({ text, start, end }) => {
     setSelection({ text, start, end });
@@ -194,6 +196,7 @@ export function Record() {
         >
           {record.tags?.map((tag) => (
             <Chip
+              key={tag}
               label={tag}
               size="small"
               sx={{
@@ -232,6 +235,7 @@ export function Record() {
         {/* Annotation cards */}
         {record.annotations?.map((annotation) => (
           <AnnotationCard
+            key={annotation.id}
             {...annotation}
             onDelete={handleAnnotationDelete}
             onEdit={handleAnnotationEdit}
@@ -268,15 +272,17 @@ export function Record() {
             <EditIcon sx={{ mr: 1 }} />
             Edit
           </Fab>
-          <Fab
-            variant="extended"
-            size="medium"
-            color="primary"
-            aria-label="add"
-          >
-            <AddIcon sx={{ mr: 1 }} />
-            New
-          </Fab>
+          <Link href="/records/new" passHref>
+            <Fab
+              variant="extended"
+              size="medium"
+              color="primary"
+              aria-label="add"
+            >
+              <AddIcon sx={{ mr: 1 }} />
+              New
+            </Fab>
+          </Link>
         </Box>
       </Box>
     </Container>

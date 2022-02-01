@@ -85,10 +85,9 @@ export const createRecord = (record) => async (dispatch) => {
   try {
     console.log('createRecord()', { record });
     const createdRecord = await api.createRecord(record);
-    dispatch(_createRecord(createdRecord));
     dispatch(
       push({
-        pathname: `/record`,
+        pathname: `/records/${createdRecord.text}`,
       })
     );
   } catch (error) {
