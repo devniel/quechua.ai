@@ -8,7 +8,18 @@ export function Index() {
    * Note: The corresponding styles are in the ./index.@emotion/styled file.
    */
   return (
-    <Container maxWidth="sm" sx={{ height: '100vh', margin: 0, padding: 0 }}>
+    <Container
+      maxWidth="sm"
+      sx={{
+        height: '100vh',
+        margin: 0,
+        padding: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <Box display="flex" flexDirection="column" alignItems="center">
         <Typography variant="h1" component="h2" mb={3}>
           quechua.ai
