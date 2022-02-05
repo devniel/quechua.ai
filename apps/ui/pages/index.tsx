@@ -1,7 +1,20 @@
-import { Button, Container, TextField, Typography } from '@mui/material';
+import { useTheme } from '@emotion/react';
+import {
+  Button,
+  Container,
+  IconButton,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { Box } from '@mui/material/node_modules/@mui/system';
+import { createContext, useContext } from 'react';
+
+const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 export function Index() {
+  const theme = useTheme();
+  const colorMode = useContext(ColorModeContext);
+
   /*
    * Replace the elements below with your own.
    *
