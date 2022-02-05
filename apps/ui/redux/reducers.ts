@@ -1,4 +1,4 @@
-import { Record } from '@quechua.ai/entities';
+import { Record, Search } from '@quechua.ai/entities';
 import { combineReducers } from 'redux';
 import { HYDRATE, createWrapper } from 'next-redux-wrapper';
 import {
@@ -46,9 +46,21 @@ const recordsReducer = (state: Record | null = null, { type, payload }) => {
   }
 };
 
+const searchReducer = (state: Search | null = null, { type, payload }) => {
+  const search = JSON.parse(JSON.stringify(state));
+  switch (type) {
+    case types.SET_SEARCH: {
+      return payload;
+    }
+    default:
+      return search;
+  }
+};
+
 /**
  * Router reducer
  */
+
 // Using next-redux-wrapper's initStore
 export const mainReducer = (state, action) => {
   if (action.type === HYDRATE) {
@@ -68,6 +80,7 @@ export const mainReducer = (state, action) => {
 
 // COMBINED REDUCERS
 const rootReducer = combineReducers({
+  search: searchReducer,
   record: recordsReducer,
   router: routerReducer,
 });

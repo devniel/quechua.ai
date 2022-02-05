@@ -1,34 +1,18 @@
 import { PropsWithChildren } from 'react';
 import { css, jsx } from '@emotion/react';
 import { Box, Card, CardContent, IconButton, Typography } from '@mui/material';
-import { Annotation } from '@quechua.ai/entities';
+import { Record } from '@quechua.ai/entities';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import TagsInput from './TagsInput';
 import Chip from '@mui/material/Chip';
 
-export default function AnnotationCard({
+export default function RecordCard({
   id,
   text,
-  color,
-  tags,
-  formats,
   note,
-  start,
-  end,
-  onDelete = () => {},
-  onEdit = () => {},
-}: PropsWithChildren<
-  Annotation & {
-    onDelete: ({ start, end }) => void;
-    onEdit: (annotation: Annotation) => void;
-  }
->) {
-  const getFormatsAsStyle = () => ({
-    textDecoration: formats.includes('underlined') ? 'underline' : 'unset',
-    fontWeight: formats.includes('bold') ? 'bold' : 'unset',
-    fontStyle: formats.includes('italic') ? 'italic' : 'unset',
-  });
+  tags = [],
+}: PropsWithChildren<Record>) {
   return (
     <Card sx={{ minWidth: 275 }}>
       <CardContent>
@@ -41,29 +25,9 @@ export default function AnnotationCard({
             gap: '5px',
           }}
         >
-          <Typography
-            variant="h5"
-            component="div"
-            color={color}
-            flex={1}
-            sx={getFormatsAsStyle()}
-          >
+          <Typography variant="h5" component="div" flex={1}>
             {text}
           </Typography>
-          <IconButton
-            aria-label="edit"
-            onClick={() =>
-              onEdit({ id, text, color, tags, formats, note, start, end })
-            }
-          >
-            <EditIcon />
-          </IconButton>
-          <IconButton
-            aria-label="delete"
-            onClick={() => onDelete({ start, end })}
-          >
-            <DeleteIcon />
-          </IconButton>
         </Box>
         {tags.map((tag) => (
           <Chip

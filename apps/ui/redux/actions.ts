@@ -33,6 +33,11 @@ export const _createRecord = (record) => ({
   payload: record,
 });
 
+export const setSearch = (search) => ({
+  type: types.SET_SEARCH,
+  payload: search,
+});
+
 export const getRecord = (recordId) => async (dispatch) => {
   try {
     const record = await api.getRecord(recordId);
@@ -94,3 +99,21 @@ export const createRecord = (record) => async (dispatch) => {
     console.error(error);
   }
 };
+
+export const searchRecord =
+  ({ query, page }: { query: string; page?: number }) =>
+  async (dispatch) => {
+    try {
+      console.log('searchRecord()', { query, page });
+      const search = await api.searchRecord({ query, page });
+      dispatch(setSearch(search));
+      dispatch(
+        push({
+          pathname: `/search/results`,
+          query: { query, page },
+        })
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };

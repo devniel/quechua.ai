@@ -7,19 +7,28 @@ import {
   Typography,
 } from '@mui/material';
 import { Box } from '@mui/material/node_modules/@mui/system';
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { searchRecord } from '../redux/actions';
 
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 export function Index() {
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
+  const [query, setQuery] = useState<string>('');
+  const dispatch = useDispatch();
 
-  /*
-   * Replace the elements below with your own.
-   *
-   * Note: The corresponding styles are in the ./index.@emotion/styled file.
-   */
+  /** When changing query text */
+  const handleChangeQuery = (e) => {
+    setQuery(e.target.value);
+  };
+
+  /** Handle search */
+  const handleSearch = () => {
+    dispatch(searchRecord(query));
+  };
+
   return (
     <Container
       maxWidth="sm"
@@ -37,8 +46,14 @@ export function Index() {
         <Typography variant="h1" component="h2" mb={3}>
           quechua.ai
         </Typography>
-        <TextField fullWidth label="search for a quechua word" id="fullWidth" />
-        <Button variant="contained" sx={{ m: 3 }}>
+        <TextField
+          fullWidth
+          label="search for a quechua word"
+          id="fullWidth"
+          value={query}
+          onChange={handleChangeQuery}
+        />
+        <Button variant="contained" sx={{ m: 3 }} onClick={handleSearch}>
           Search
         </Button>
       </Box>

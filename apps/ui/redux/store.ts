@@ -49,7 +49,6 @@ export function useStore(initialState) {
 }
 
 export const setupStore = (context) => {
-  console.log('context:', context);
   const { asPath } = context.ctx || Router.router || {};
   let initialState;
   if (asPath) {
