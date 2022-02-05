@@ -1,5 +1,6 @@
 import { AppProps } from 'next/app';
 import * as React from 'react';
+import { useRef, useState, useLayoutEffect, useMemo } from 'react';
 import PropTypes, { InferProps } from 'prop-types';
 import Head from 'next/head';
 import { ThemeProvider } from '@mui/material/styles';
@@ -11,7 +12,7 @@ import { EmotionCache } from '@emotion/utils';
 import { Provider } from 'react-redux';
 import { useStore, wrapper } from '../redux/store';
 import { ConnectedRouter } from 'connected-next-router';
-import { Container, IconButton } from '@mui/material';
+import { Container, IconButton, useMediaQuery } from '@mui/material';
 import { Box } from '@mui/material/node_modules/@mui/system';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
@@ -28,8 +29,10 @@ const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 function CustomApp(props: CustomAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   const store = useStore(pageProps.initialReduxState);
-  const [mode, setMode] = React.useState<'light' | 'dark'>('light');
-  const colorMode = React.useMemo(
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const [mode, setMode] = useState<'light' | 'dark'>('light');
+  const theme = useMemo(() => getTheme(mode), [mode]);
+  const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
         setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
@@ -37,7 +40,10 @@ function CustomApp(props: CustomAppProps) {
     }),
     []
   );
-  const theme = React.useMemo(() => getTheme(mode), [mode]);
+
+  useLayoutEffect(() => {
+    setMode(prefersDarkMode ? 'dark' : 'light');
+  }, [prefersDarkMode]);
 
   return (
     <Provider store={store}>
