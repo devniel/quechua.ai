@@ -7,9 +7,13 @@ import {
   Typography,
 } from '@mui/material';
 import { Box } from '@mui/material/node_modules/@mui/system';
+import { push } from 'connected-next-router';
 import { createContext, useContext, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { searchRecord } from '../redux/actions';
+import {
+  DEFAULT_PAGE_SEARCH_RESULTS,
+  DEFAULT_PAGE_START,
+} from '../constants/constants';
 
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
@@ -26,7 +30,12 @@ export function Index() {
 
   /** Handle search */
   const handleSearch = () => {
-    dispatch(searchRecord(query));
+    dispatch(
+      push({
+        pathname: DEFAULT_PAGE_SEARCH_RESULTS,
+        query: { query, page: DEFAULT_PAGE_START },
+      })
+    );
   };
 
   return (

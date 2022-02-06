@@ -1,5 +1,7 @@
-import { useRef, useEffect, useState } from 'react';
-import styled from '@emotion/styled';
+import * as api from '../../services/api';
+import * as d3 from 'd3';
+import * as d3Annotation from 'd3-svg-annotation';
+
 import {
   Box,
   Button,
@@ -19,17 +21,12 @@ import {
   InputLabel,
   ListItem,
   Pagination,
-  TextareaAutosize,
   TextField,
+  TextareaAutosize,
   Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import Annotation from '../../components/Annotation';
-import * as d3 from 'd3';
-import * as d3Annotation from 'd3-svg-annotation';
-import { useDispatch, useSelector } from 'react-redux';
-import { useRouter } from 'next/router';
 import {
   addAnnotation,
   createRecord,
@@ -39,65 +36,50 @@ import {
   getRecord,
   searchRecord,
 } from '../../redux/actions';
-import TagFacesIcon from '@mui/icons-material/TagFaces';
-import TagsInput from '../../components/TagsInput';
-import { GithubPicker } from 'react-color';
-import AnnotationModal from '../../components/AnnotationModal';
-import RecordText from '../../components/RecordText';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useRef, useState } from 'react';
+
 import AddIcon from '@mui/icons-material/Add';
+import Annotation from '../../components/Annotation';
+import AnnotationCard from '../../components/AnnotationCard';
+import AnnotationModal from '../../components/AnnotationModal';
+import { DEFAULT_PAGE_SEARCH_RESULTS } from '../../constants/constants';
 import EditIcon from '@mui/icons-material/Edit';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import { GithubPicker } from 'react-color';
 import NavigationIcon from '@mui/icons-material/Navigation';
-import AnnotationCard from '../../components/AnnotationCard';
-import RecordModal from '../../components/RecordModal';
 import RecordCard from '../../components/RecordCard';
+import RecordModal from '../../components/RecordModal';
+import RecordText from '../../components/RecordText';
 import { Search } from '@quechua.ai/entities';
+import TagFacesIcon from '@mui/icons-material/TagFaces';
+import TagsInput from '../../components/TagsInput';
+import { push } from 'connected-next-router';
+import styled from '@emotion/styled';
+import { useRouter } from 'next/router';
 
-const StyledPage = styled.div`
-  .page {
-  }
-`;
-
-const annotations = [
-  {
-    start: 0,
-    end: 7,
-    color: 'red',
-    text: 'allillan',
-    tags: 'text.secondary',
-    note: 'text.note',
-  },
-  {
-    start: 8,
-    end: 10,
-    color: 'blue',
-    text: 'chu',
-    tags: 'text.secondary',
-    note: 'text.note',
-  },
-];
-
-export function SearchResults() {
-  const router = useRouter();
-  const search = useSelector((state: any) => state.search);
-  const [query, setQuery] = useState<string>(search?.query || '');
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (!router.isReady) return;
-    setQuery(router.query.query || '');
-    dispatch(searchRecord({ query: router.query.query }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.isReady]);
-
-  /** When changing query text */
-  const handleChangeQuery = (e) => {
-    setQuery(e?.target?.value || '');
+export async function getServerSideProps(context) {
+  const search = await api.searchRecord(context.query);
+  return {
+    props: search,
   };
+}
+
+export function SearchResults({ query, results, page, pageSize, total }) {
+  const queryField = useRef<HTMLInputElement>();
+  const dispatch = useDispatch();
 
   /** Handle search */
   const handleSearch = () => {
-    dispatch(searchRecord({ query }));
+    dispatch(
+      push({
+        pathname: DEFAULT_PAGE_SEARCH_RESULTS,
+        query: {
+          query: queryField.current?.value,
+          page: 1,
+        },
+      })
+    );
   };
 
   /** Handle change page */
@@ -106,9 +88,9 @@ export function SearchResults() {
     value: number
   ) => {
     dispatch(
-      searchRecord({
-        query: search.query,
-        page: value,
+      push({
+        pathname: DEFAULT_PAGE_SEARCH_RESULTS,
+        query: { query, page: value },
       })
     );
   };
@@ -128,11 +110,11 @@ export function SearchResults() {
         }}
       >
         <TextField
+          inputRef={queryField}
           fullWidth
           label="search for a quechua word"
           id="fullWidth"
-          value={query}
-          onChange={handleChangeQuery}
+          defaultValue={query}
         />
         <Button variant="contained" sx={{ ml: 1 }} onClick={handleSearch}>
           Search
@@ -146,7 +128,7 @@ export function SearchResults() {
         }}
       >
         {/* Results */}
-        {search?.results?.map((record) => (
+        {results?.map((record) => (
           <RecordCard key={record.id} {...record} />
         ))}
       </Box>
@@ -160,8 +142,8 @@ export function SearchResults() {
         }}
       >
         <Pagination
-          count={Math.ceil(search?.total / search?.pageSize)}
-          page={search?.page}
+          count={Math.ceil(total / pageSize)}
+          page={Number(page as string)}
           onChange={handleChangePage}
         />
       </Box>

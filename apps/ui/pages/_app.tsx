@@ -1,21 +1,23 @@
-import { AppProps } from 'next/app';
 import * as React from 'react';
-import { useRef, useState, useLayoutEffect, useMemo } from 'react';
-import PropTypes, { InferProps } from 'prop-types';
-import Head from 'next/head';
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
+
 import { CacheProvider, useTheme } from '@emotion/react';
-import { getTheme } from '../theme';
-import createEmotionCache from '../createEmotionCache';
-import { EmotionCache } from '@emotion/utils';
-import { Provider } from 'react-redux';
-import { useStore, wrapper } from '../redux/store';
-import { ConnectedRouter } from 'connected-next-router';
 import { Container, IconButton, useMediaQuery } from '@mui/material';
+import PropTypes, { InferProps } from 'prop-types';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useStore, wrapper } from '../redux/store';
+
+import { AppProps } from 'next/app';
 import { Box } from '@mui/material/node_modules/@mui/system';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import { ConnectedRouter } from 'connected-next-router';
+import CssBaseline from '@mui/material/CssBaseline';
+import { EmotionCache } from '@emotion/utils';
+import Head from 'next/head';
+import { Provider } from 'react-redux';
+import { ThemeProvider } from '@mui/material/styles';
+import createEmotionCache from '../createEmotionCache';
+import { getTheme } from '../theme';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();

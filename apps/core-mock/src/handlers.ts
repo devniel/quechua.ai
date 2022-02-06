@@ -31,12 +31,12 @@ const searchRecord = rest.get('/search', (req, res, ctx) => {
   console.log('searchRecord()', req.body, req.params, req.url.searchParams);
   const chance = new Chance();
   const query = req.url.searchParams.get('query');
-  const page = Number(req.url.searchParams.get('page') || 0);
+  const page = Number(req.url.searchParams.get('page') || 1);
   const pageSize = Number(req.url.searchParams.get('pageSize') || 20);
   const results = Array.from({
-    length: chance.integer({ min: 0, max: 300 }),
+    length: chance.integer({ min: 50, max: 300 }),
   }).map(() => Record.fake());
-  const start = page * pageSize;
+  const start = (page - 1) * pageSize;
   const end = start + pageSize;
   return res(
     ctx.json({

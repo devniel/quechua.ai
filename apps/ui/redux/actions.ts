@@ -107,12 +107,6 @@ export const searchRecord =
       console.log('searchRecord()', { query, page });
       const search = await api.searchRecord({ query, page });
       dispatch(setSearch(search));
-      dispatch(
-        push({
-          pathname: `/search/results`,
-          query: { query, page },
-        })
-      );
     } catch (error) {
       console.error(error);
     }
