@@ -86,8 +86,10 @@ export function RecordNew() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getRecord(router.query.rid));
-  }, []);
+    if (!router.isReady) return;
+    setText(router.query.text);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady]);
 
   /** Note */
   const handleChangeNote = (e) => {
@@ -103,9 +105,6 @@ export function RecordNew() {
   const handleChangeText = (e) => {
     setText(e.target.value);
   };
-
-  /** When closing modal by using 'Cancel' or 'X' */
-  const handleOnCancel = () => {};
 
   /** When accepting changes and closing modal */
   const handleOnAccept = () => {
@@ -180,7 +179,7 @@ export function RecordNew() {
             alignItems: 'center',
           }}
         >
-          <Button autoFocus onClick={handleOnCancel}>
+          <Button autoFocus href="/">
             Cancel
           </Button>
           <Button onClick={handleOnAccept} autoFocus variant="contained">

@@ -57,6 +57,8 @@ import TagsInput from '../../components/TagsInput';
 import { push } from 'connected-next-router';
 import styled from '@emotion/styled';
 import { useRouter } from 'next/router';
+import Empty from '../../components/images/Empty';
+import CreateIcon from '@mui/icons-material/Create';
 
 export async function getServerSideProps(context) {
   const search = await api.searchRecord(context.query);
@@ -120,33 +122,63 @@ export function SearchResults({ query, results, page, pageSize, total }) {
           Search
         </Button>
       </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '10px',
-        }}
-      >
-        {/* Results */}
-        {results?.map((record) => (
-          <RecordCard key={record.id} {...record} />
-        ))}
-      </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '10px',
-          mt: 2,
-        }}
-      >
-        <Pagination
-          count={Math.ceil(total / pageSize)}
-          page={Number(page as string)}
-          onChange={handleChangePage}
-        />
-      </Box>
+      {/** Empty page */}
+      {results.length == 0 && (
+        <Box
+          display={'flex'}
+          alignItems="center"
+          justifyContent="center"
+          flexDirection="column"
+          m={10}
+        >
+          <Empty width={200} height={200} />
+          <Typography variant="h5" component="div" mt={5} textAlign={'center'}>
+            {`No results were found for `}
+            <strong>&quot;{query}&quot;</strong>, do you want to contribute it ?
+          </Typography>
+          <Button
+            variant="contained"
+            sx={{ mt: 1 }}
+            href={`/records/new?text=${query}`}
+            startIcon={<CreateIcon />}
+          >
+            Add record
+          </Button>
+        </Box>
+      )}
+      {/** Content page */}
+      {results.length > 0 && (
+        <>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '10px',
+            }}
+          >
+            {/* Results */}
+            {results.length > 0 &&
+              results?.map((record) => (
+                <RecordCard key={record.id} {...record} />
+              ))}
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '10px',
+              mt: 2,
+            }}
+          >
+            <Pagination
+              count={Math.ceil(total / pageSize)}
+              page={Number(page as string)}
+              onChange={handleChangePage}
+            />
+          </Box>
+        </>
+      )}
     </Container>
   );
 }

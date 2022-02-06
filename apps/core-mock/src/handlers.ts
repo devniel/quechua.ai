@@ -33,6 +33,17 @@ const searchRecord = rest.get('/search', (req, res, ctx) => {
   const query = req.url.searchParams.get('query');
   const page = Number(req.url.searchParams.get('page') || 1);
   const pageSize = Number(req.url.searchParams.get('pageSize') || 20);
+  if (query == 'empty') {
+    return res(
+      ctx.json({
+        query,
+        results: [],
+        page,
+        pageSize,
+        total: 0,
+      })
+    );
+  }
   const results = Array.from({
     length: chance.integer({ min: 50, max: 300 }),
   }).map(() => Record.fake());
