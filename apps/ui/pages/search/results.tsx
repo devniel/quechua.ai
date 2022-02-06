@@ -117,6 +117,12 @@ export function SearchResults({ query, results, page, pageSize, total }) {
           label="search for a quechua word"
           id="fullWidth"
           defaultValue={query}
+          onKeyPress={(ev) => {
+            if (ev.key === 'Enter') {
+              handleSearch();
+              ev.preventDefault();
+            }
+          }}
         />
         <Button variant="contained" sx={{ ml: 1 }} onClick={handleSearch}>
           Search

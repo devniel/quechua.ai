@@ -61,6 +61,12 @@ export function Index() {
           id="fullWidth"
           value={query}
           onChange={handleChangeQuery}
+          onKeyPress={(ev) => {
+            if (ev.key === 'Enter') {
+              handleSearch();
+              ev.preventDefault();
+            }
+          }}
         />
         <Button variant="contained" sx={{ m: 3 }} onClick={handleSearch}>
           Search
